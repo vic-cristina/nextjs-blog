@@ -1,0 +1,44 @@
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+
+/** State = store data,
+ * Effect = changes with call,
+ * API CALLS = brings data**/
+
+const PostPage = () => {
+  const router = useRouter();
+  console.log("router", router);
+  const postId = router.query?.postId;
+  console.log(postId);
+  const [data, setData] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const getData = async (id) => {
+    console.log("ID", id);
+    const res = await fetch("https://v2.jokeapi.dev/joke/Any");
+    const data = await res.json();
+    setData(data);
+    setLoading(false);
+  };
+
+  const handleGetData = async (id) => {
+    await getData(id);
+  };
+
+  useEffect(() => {
+    if (typeof postId !== "undefined") handleGetData(postId);
+  }, [postId]);
+
+  console.log(data);
+
+  return loading ? (
+    <p>Loading...</p>
+  ) : (
+    <div>
+      {" "}
+      {data.type === "single" ? data.joke : `${data.setup} ${data.delivery}`}
+    </div>
+  );
+};
+
+export default PostPage;
